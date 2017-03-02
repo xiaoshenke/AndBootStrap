@@ -1,0 +1,2 @@
+# AndBootstrap
+Android project bootstrap.
