@@ -1,4 +1,4 @@
-package wuxian.me.andbootstrapdemo;
+package wuxian.me.andbootstrapdemo.searchuser;
 
 
 import android.support.v4.app.Fragment;
@@ -9,9 +9,9 @@ import com.google.common.base.Preconditions;
  * Created by wuxian on 4/3/2017.
  */
 
-public class GithubTrendListFragment extends Fragment implements GithubTrendListContract.View {
+public class GithubSearchUserFragment extends Fragment implements IGithubSearchUserView {
 
-    private GithubTrendListContract.Presenter mPresenter;
+    private GithubSearchUserPresenter mPresenter;
 
     @Override
     public void onResume() {
@@ -32,7 +32,7 @@ public class GithubTrendListFragment extends Fragment implements GithubTrendList
     }
 
     @Override
-    public void setPresenter(GithubTrendListContract.Presenter presenter) {
+    public void setPresenter(GithubSearchUserPresenter presenter) {
         mPresenter = Preconditions.checkNotNull(presenter);
     }
 }

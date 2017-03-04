@@ -4,7 +4,7 @@ package wuxian.me.andbootstrapdemo;
  * Created by wuxian on 4/3/2017.
  */
 
-public interface GithubTrendListSource {
+public interface Constant {
 
-    //Todo: github 接口
+    String BASE_URL = "https://api.github.com/";
 }
