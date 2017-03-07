@@ -9,9 +9,9 @@ import io.reactivex.Observable;
 import io.reactivex.functions.Function;
 
 import wuxian.me.andbootstrap.scheduler.SchedulerProvider;
-import wuxian.me.andbootstrapdemo.GithubService;
-import wuxian.me.andbootstrapdemo.MyRetrofit;
-import wuxian.me.andbootstrapdemo.SearchUserBean;
+import wuxian.me.andbootstrapdemo.api.GithubService;
+import wuxian.me.andbootstrapdemo.utils.MyRetrofit;
+import wuxian.me.andbootstrapdemo.api.SearchUserBean;
 
 /**
  * Created by wuxian on 5/3/2017.

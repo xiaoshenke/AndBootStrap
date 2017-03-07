@@ -9,7 +9,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
-import wuxian.me.andbootstrapdemo.ActivityUtils;
+import wuxian.me.andbootstrapdemo.utils.ActivityUtils;
 import wuxian.me.andbootstrapdemo.R;
 import wuxian.me.andbootstrapdemo.base.BaseActionbarActivity;
 
@@ -40,7 +40,6 @@ public class GithubSearchUserActivity extends BaseActionbarActivity {
                         fragment, R.id.fragment_container);
             }
         }
-
 
         return view;
     }

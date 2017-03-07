@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package wuxian.me.andbootstrapdemo;
+package wuxian.me.andbootstrapdemo.utils;
 
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;

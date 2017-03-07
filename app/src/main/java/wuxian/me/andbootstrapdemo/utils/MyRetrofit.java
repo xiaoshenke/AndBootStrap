@@ -1,4 +1,4 @@
-package wuxian.me.andbootstrapdemo;
+package wuxian.me.andbootstrapdemo.utils;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 
