@@ -8,5 +8,5 @@
 /captures
 .externalNativeBuild
 .idea
-gradle/wrapper/gradle*.zip
+gradle/wrapper/*.zip
 
