@@ -4,4 +4,9 @@
     <color name="colorPrimaryDark">#7b7b7b</color>
     <color name="colorAccent">#7b7b7b</color>
 
+    <color name="color_e4e5e7">#e4e5e7</color>
+    <color name="color_9b9b9b">#9b9b9b</color>
+    <color name="color_333333">#333333</color>
+
+    <color name="color_toolbar_divider">#dbdbdb</color>
 </resources>
