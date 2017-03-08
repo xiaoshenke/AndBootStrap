@@ -4,7 +4,7 @@ import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static wuxian.me.andbootstrapdemo.Constant.BASE_URL;
@@ -26,7 +26,7 @@ public class MyRetrofit {
             sretrofit = new Retrofit.Builder().client(client)
                     .addConverterFactory(GsonConverterFactory.create())
                     .baseUrl(BASE_URL)
-                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .build();
 
         }

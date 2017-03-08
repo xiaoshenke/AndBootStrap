@@ -5,16 +5,11 @@ package wuxian.me.andbootstrapdemo.searchuser.data;
  */
 
 public class SearchRet {
-
     public String login;
-
-    public int id;
-
     public String avatar_url;
 
-    public String url;
+    public String url;  //https://api.github.com/user/mojombo
+    public String html_url; //https://github.com.mojombo
 
-    public String repos_url;
-
-    public String score;
+    public double score;
 }

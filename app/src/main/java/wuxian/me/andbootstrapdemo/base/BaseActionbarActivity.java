@@ -90,15 +90,10 @@ public abstract class BaseActionbarActivity extends BaseActivity {
     protected abstract List<MenuItemData> getMenuItemDatas();
 
     public static class MenuItemData {
-
         public int itemId;
-
         public String title;
-
         public int iconRes;
-
         public boolean atTitle = false;
-
         public MenuItem.OnMenuItemClickListener onClickListener;
 
     }

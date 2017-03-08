@@ -11,13 +11,14 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import wuxian.me.andbootstrapdemo.R;
+import wuxian.me.andbootstrapdemo.searchuser.data.SearchRet;
 import wuxian.me.andbootstrapdemo.utils.view.BaseHeaderAdapter;
 
 /**
  * Created by wuxian on 8/3/2017.
  */
 
-public class SearchAdapter<T> extends BaseHeaderAdapter<SearchAdapter.ViewHolder, T> {
+public class SearchAdapter extends BaseHeaderAdapter<SearchAdapter.ViewHolder, SearchRet> {
     @Override
     protected SearchAdapter.ViewHolder onCreateItemViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_search_user, null, false);
@@ -45,7 +46,7 @@ public class SearchAdapter<T> extends BaseHeaderAdapter<SearchAdapter.ViewHolder
         public ViewHolder(View itemView) {
             super(itemView);
 
-            ButterKnife.bind(itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
 }

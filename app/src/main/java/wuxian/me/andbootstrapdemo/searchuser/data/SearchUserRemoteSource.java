@@ -37,6 +37,8 @@ public class SearchUserRemoteSource implements ISearchUserSource {
 
         Map<String, String> map = new HashMap<>();
         map.put("q", search);
+        map.put("sort", "followers");
+        map.put("order", "desc");
         return service.searchUser(map)
                 .subscribeOn(SchedulerProvider.getInstance().io())
                 .observeOn(SchedulerProvider.getInstance().ui())
@@ -49,6 +51,8 @@ public class SearchUserRemoteSource implements ISearchUserSource {
                             for (SearchUserBean.SearchItem item : searchUserBean.items) {
                                 SearchRet searchRet = new SearchRet();
                                 searchRet.avatar_url = item.avatar_url;
+                                searchRet.login = item.login;
+                                searchRet.score = item.score;
 
                                 ret.add(searchRet);
                             }

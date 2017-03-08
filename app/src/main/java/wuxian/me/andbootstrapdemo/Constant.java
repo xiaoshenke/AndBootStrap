@@ -6,5 +6,5 @@ package wuxian.me.andbootstrapdemo;
 
 public interface Constant {
 
-    String BASE_URL = "https://api.github.com/";
+    String BASE_URL = "https://api.github.com/v3/";
 }

@@ -25,6 +25,6 @@ public class SearchUserBean {
 
         public String repos_url;
 
-        public String score;
+        public double score;
     }
 }
