@@ -14,7 +14,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private Toast mToast = null;
 
-    protected void showToast(String msg, int duration) {
+    public void showToast(String msg, int duration) {
 
         if (mToast == null) {
             mToast = Toast.makeText(this, msg, duration);
@@ -26,7 +26,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         mToast.show();
     }
 
-    protected void hideKeyboard(EditText edit){
+    public void hideKeyboard(EditText edit) {
         if (edit == null) {
             return;
         }
