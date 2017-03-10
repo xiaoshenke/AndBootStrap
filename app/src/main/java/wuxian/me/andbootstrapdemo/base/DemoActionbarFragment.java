@@ -38,6 +38,7 @@ public class DemoActionbarFragment extends BaseActionbarFragment {
     @Nullable
     @Override
     protected List<BaseActionbarActivity.MenuItemData> getMenuItemDatas() {
+
         List<BaseActionbarActivity.MenuItemData> menuItemDatas = new ArrayList<>();
 
         BaseActionbarActivity.MenuItemData data = new BaseActionbarActivity.MenuItemData();

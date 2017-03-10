@@ -1,7 +1,10 @@
 package wuxian.me.andbootstrap;
 
 import android.content.Context;
+import android.support.annotation.LayoutRes;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -33,5 +36,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         edit.clearFocus();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(edit.getWindowToken(), 0);
+    }
+
+    protected View inflate(@LayoutRes int resId) {
+        return LayoutInflater.from(this).inflate(resId, null, false);
     }
 }
