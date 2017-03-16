@@ -227,7 +227,7 @@ public abstract class BaseHeaderAdapter<VH extends RecyclerView.ViewHolder, T>
     }
 
     /**
-     * Call this method to hide footer.
+     * Call this method to hideImmediate footer.
      */
     public void hideFooter() {
         this.showFooter = false;

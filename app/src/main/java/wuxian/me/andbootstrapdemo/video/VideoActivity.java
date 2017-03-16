@@ -1,4 +1,4 @@
-package wuxian.me.andbootstrapdemo;
+package wuxian.me.andbootstrapdemo.video;
 
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -7,7 +7,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -18,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -27,8 +25,8 @@ import java.io.IOException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import wuxian.me.andbootstrap.BaseActivity;
+import wuxian.me.andbootstrapdemo.R;
 import wuxian.me.andbootstrapdemo.utils.view.VerticalSeekBar;
-import wuxian.me.andbootstrapdemo.utils.view.VideoControllerView;
 
 /**
  * Created by wuxian on 16/3/2017.
@@ -116,7 +114,7 @@ public class VideoActivity extends BaseActivity implements View.OnClickListener 
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 if (mVideoControllerView.getVisibility() == View.VISIBLE) {
-                    mVideoControllerView.updatePausePlay();
+                    mVideoControllerView.updatePauseView();
                 }
                 if (mPlayError) {
                     return;
@@ -125,29 +123,7 @@ public class VideoActivity extends BaseActivity implements View.OnClickListener 
             }
         });
 
-        mVideoControllerView = new VideoControllerView(this) {
-            @Override
-            protected int layoutId() {
-                return R.layout.fullscreen_media_controller;
-            }
-
-            protected void initSpecialControl() {
-                View root = getControlView();
-                final ImageButton live_comment = (ImageButton) root.findViewById(R.id.live_comment);
-                live_comment.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                    }
-                });
-                ImageButton send_comment = (ImageButton) root.findViewById(R.id.btnComment);
-                send_comment.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        mVideoControllerView.hide();
-                    }
-                });
-            }
-        };
+        mVideoControllerView = new VideoControllerView(this);
         mVideoControllerView.setAnchorView(mVideoContainer);
         mVideoControllerView.setMediaPlayer(mediaPlayerControl);
         mVideoControllerView.setVisibility(View.GONE);
@@ -333,7 +309,7 @@ public class VideoActivity extends BaseActivity implements View.OnClickListener 
         */
     }
 
-    private VideoControllerView.MediaPlayerControl mediaPlayerControl = new MyMediaPlayerControl();
+    private IMediaPlayer mediaPlayerControl = new MyMediaPlayerControl();
 
     @Override
     public void onClick(View v) {
@@ -367,7 +343,7 @@ public class VideoActivity extends BaseActivity implements View.OnClickListener 
 
         if (mVideoControllerView != null) {
             mVideoControllerView.setAnchorView(null);
-            mVideoControllerView.hide(-1);
+            mVideoControllerView.hideImmediate();
             mVideoControllerView = null;
         }
         mSoundSeekBar = null;
@@ -418,10 +394,10 @@ public class VideoActivity extends BaseActivity implements View.OnClickListener 
     };
 
     private void doPauseResume() {
-        mVideoControllerView.doPauseResume();
+        mVideoControllerView.pause();
     }
 
-    private class MyMediaPlayerControl implements VideoControllerView.MediaPlayerControl {
+    private class MyMediaPlayerControl implements IMediaPlayer {
         public void stop() {
             try {
                 mPlayer.stop();
