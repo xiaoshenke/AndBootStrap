@@ -6,7 +6,6 @@ import android.view.Display;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.WindowManager;
-import android.widget.ProgressBar;
 
 /**
  * Created by wuxian on 16/3/2017.
@@ -29,18 +28,6 @@ public class VolumGestureListener extends GestureDetector.SimpleOnGestureListene
 
         float oldX = motion1.getX();
         if (oldX < mScreenWidth / 3.0) {
-            /*
-            int height = mProgressBar.getMeasuredHeight();
-            int max = mProgressBar.getMax();
-            int pro = mProgressBar.getProgress();
-
-
-            pro += distanceY * max / height;
-            pro = pro < max ? pro : max;
-            pro = pro >= 0 ? pro : 0;
-            mProgressBar.setProgress(pro);
-            */
-
             mListener.updateVolumBy((int) distanceX, (int) distanceY);
         }
 
