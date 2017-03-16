@@ -32,7 +32,7 @@ import wuxian.me.andbootstrapdemo.utils.view.VerticalSeekBar;
 /**
  * Created by wuxian on 16/3/2017.
  * <p>
- * Todo: 把这个封装到一个view里面 便于移植
+ * Todo: move code to @VideoView
  */
 
 public class VideoActivity extends BaseActivity implements IVolumListener {
