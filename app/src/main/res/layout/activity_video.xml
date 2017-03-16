@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/video_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+    <!-- 播放器 -->
+    <FrameLayout
+        android:id="@+id/main_videoview_contianer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/blackmask">
+
+        <SurfaceView
+            android:id="@+id/video"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+        <ProgressBar
+            android:id="@+id/product_progress"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/top_menu"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/blackmask"
+
+        >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/back"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:src="@mipmap/ic_back" />
+
+        <TextView
+            android:id="@+id/content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/back"
+            android:layout_centerVertical="true"
+            android:text="Video"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+
+        <ImageView
+            android:id="@+id/always_on_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:src="@mipmap/icon_fullscreen_lock"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/not_always_on_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:src="@mipmap/icon_fullscreen_unlock" />
+    </RelativeLayout>
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:ugrils="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/sound_control"
+            android:layout_width="100dp"
+            android:layout_height="250dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:background="@color/black_overlay"
+            android:layout_gravity="center_vertical"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/sound_on"
+                android:layout_alignParentBottom="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:src="@mipmap/icon_sound_on" />
+
+            <wuxian.me.andbootstrapdemo.utils.view.VerticalSeekBar
+                android:id="@+id/video_seekbar"
+                android:layout_above="@+id/sound_on"
+                android:layout_width="10dp"
+                android:layout_height="match_parent"
+                android:max="100"
+                android:progress="20"
+                android:maxWidth="2dp"
+                android:minWidth="2dp"
+                android:progressDrawable="@drawable/progressbar_video_sound" />
+            <!-- app:thumb="@drawable/icon_thumb" -->
+        </RelativeLayout>
+
+    </FrameLayout>
+</RelativeLayout>

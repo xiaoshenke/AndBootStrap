@@ -9,4 +9,12 @@
     <color name="color_333333">#333333</color>
 
     <color name="color_toolbar_divider">#dbdbdb</color>
+
+    <color name="blackmask">#af000000</color>
+
+    <color name="lightpink">#F6D7D5</color>
+    <color name="dark_pink">#d43173</color>
+    <color name="pink">#F43173</color>
+    <color name="black_overlay">#66000000</color>
+    <color name="littleblack">#7f7f7f7f</color>
 </resources>
