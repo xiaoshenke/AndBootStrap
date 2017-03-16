@@ -24,15 +24,20 @@ import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import wuxian.me.andbootstrap.BaseActivity;
 import wuxian.me.andbootstrapdemo.R;
 import wuxian.me.andbootstrapdemo.utils.view.VerticalSeekBar;
 
 /**
  * Created by wuxian on 16/3/2017.
+ * <p>
+ * Todo: 把这个封装到一个view里面 便于移植
  */
 
-public class VideoActivity extends BaseActivity implements View.OnClickListener {
+public class VideoActivity extends BaseActivity implements IVolumListener {
+
+    private int SYSTEM_MAX_SOUND = 0;
 
     @BindView(R.id.video_seekbar)
     VerticalSeekBar mSoundSeekBar;
@@ -50,15 +55,16 @@ public class VideoActivity extends BaseActivity implements View.OnClickListener 
     View mSoundView;
 
     private MediaPlayer mPlayer;
-
     private AudioManager mAudioManager;
-    private int mMaxSound = 0;
-    private boolean mPlayError = false;
+
     private VideoControllerView mVideoControllerView;
+    private GestureDetector mGestureDetector;
+
+    private boolean mOnTop = false;
+    private boolean mPlayError = false;
     private Uri mVideoUri = null;
     private boolean mPlayingWhenPause = true;
     private boolean mLandscapeMode = false;
-    private GestureDetector mGestureDetector;
 
     private MediaPlayer.OnPreparedListener mPlayerPreparedListener = new MediaPlayer.OnPreparedListener() {
         @Override
@@ -75,9 +81,46 @@ public class VideoActivity extends BaseActivity implements View.OnClickListener 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(inflate(R.layout.activity_video));
+
+        mAudioManager = (AudioManager) getSystemService(this.AUDIO_SERVICE);
+        SYSTEM_MAX_SOUND = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+
+        View v = inflate(R.layout.activity_video);
+        setContentView(v);
         ButterKnife.bind(this);
+
+        mPlayer = new MediaPlayer();
+        mPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mediaPlayer, int what, int extra) {
+                mediaPlayer.reset();
+                if (what != MediaPlayer.MEDIA_ERROR_UNKNOWN) {
+                    //Todo
+                }
+                mPlayError = true;
+                return false;
+            }
+        });
+        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                if (mVideoControllerView != null && mVideoControllerView.getVisibility() == View.VISIBLE) {
+                    mVideoControllerView.updatePauseView();
+                }
+                if (mPlayError) {
+                    return;
+                }
+                return;
+            }
+        });
+
         initView();
+        v.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                playVideo();    //Todo:
+            }
+        }, 2000);
     }
 
     private void playVideo() {
@@ -98,47 +141,30 @@ public class VideoActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void initView() {
-        mPlayer = new MediaPlayer();
-        mPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-            @Override
-            public boolean onError(MediaPlayer mediaPlayer, int what, int extra) {
-                mediaPlayer.reset();
-                if (what != MediaPlayer.MEDIA_ERROR_UNKNOWN) {
-                    //Todo
-                }
-                mPlayError = true;
-                return false;
-            }
-        });
-        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                if (mVideoControllerView.getVisibility() == View.VISIBLE) {
-                    mVideoControllerView.updatePauseView();
-                }
-                if (mPlayError) {
-                    return;
-                }
-                return;
-            }
-        });
+        mSurfaceview.getHolder().addCallback(mSufaceCallback);
+
+        mGestureDetector = new GestureDetector(this, new VolumGestureListener(this, this));
 
         mVideoControllerView = new VideoControllerView(this);
         mVideoControllerView.setAnchorView(mVideoContainer);
         mVideoControllerView.setMediaPlayer(mediaPlayerControl);
         mVideoControllerView.setVisibility(View.GONE);
-        updatePlayerSeekEnable();
 
-        mSurfaceview.getHolder().addCallback(mSufaceCallback);
+        mVideoContainer.setOnClickListener(null);
+        mVideoContainer.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return mGestureDetector.onTouchEvent(event);
+            }
+        });
 
-        initZoominView();
+        updateOtherView();
+    }
 
+    private void updateOtherView() {
         updateVideoContainerView();
         updateSurfaceView();
-
         updateSoundView();
-
-        playVideo();
     }
 
     private void updateSoundView() {
@@ -157,15 +183,11 @@ public class VideoActivity extends BaseActivity implements View.OnClickListener 
         }
         fllp.gravity = Gravity.CENTER_VERTICAL | Gravity.LEFT;
         mSoundView.setLayoutParams(fllp);
-
     }
-
-    private boolean ziIsAlwaysOnTop = false;
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-
-        if (ziIsAlwaysOnTop) {
+        if (mOnTop) {
             super.onConfigurationChanged(newConfig);
             if (mLandscapeMode) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -177,11 +199,8 @@ public class VideoActivity extends BaseActivity implements View.OnClickListener 
         super.onConfigurationChanged(newConfig);
         mLandscapeMode = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
 
-        updateVideoContainerView();
-        updateSurfaceView();
-        updateSoundView();
+        updateOtherView();
     }
-
 
     private void updateSurfaceView() {
         FrameLayout.LayoutParams fllp;
@@ -189,47 +208,16 @@ public class VideoActivity extends BaseActivity implements View.OnClickListener 
             fllp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         } else {
             int width = getWindowManager().getDefaultDisplay().getWidth();
-
             fllp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width * 10 / 16);
-
         }
         fllp.gravity = Gravity.CENTER;
         mSurfaceview.setLayoutParams(fllp);
     }
 
     private void updateVideoContainerView() {
-        mVideoContainer.setOnClickListener(null);
-        mVideoContainer.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                return mGestureDetector.onTouchEvent(event);
-            }
-        });
-
-        RelativeLayout.LayoutParams videoRllp = new RelativeLayout.LayoutParams(0, 0);
-        videoRllp.height = RelativeLayout.LayoutParams.MATCH_PARENT;
-        videoRllp.addRule(RelativeLayout.CENTER_VERTICAL, 1);
-        mVideoContainer.setLayoutParams(videoRllp);
-    }
-
-    private void initZoominView() {
-        mAudioManager = (AudioManager) getSystemService(this.AUDIO_SERVICE);
-        mMaxSound = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-
-        mSoundSeekBar.setOnSeekBarChangeListener(new VerticalSeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onStartTrackingTouch(VerticalSeekBar seekBar) {
-                updateVolumn();
-            }
-
-            @Override
-            public void onStopTrackingTouch(VerticalSeekBar seekBar) {
-                //updateVolumn();
-            }
-        });
-
-        mGestureDetector = new GestureDetector(this, new MyGestureListener());
+        RelativeLayout.LayoutParams rllp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        rllp.addRule(RelativeLayout.CENTER_VERTICAL, 1);
+        mVideoContainer.setLayoutParams(rllp);
     }
 
     private void updateSoftInputModeSetting() {
@@ -237,97 +225,29 @@ public class VideoActivity extends BaseActivity implements View.OnClickListener 
                 | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
 
-    private int dp2px(int dp) {
-        return (int) (getApplicationContext().getResources().getDisplayMetrics().density * dp + 0.5f);
-    }
-
-    private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
-        // 用户按下触摸屏，并拖动，由1个MotionEvent ACTION_DOWN, 多个ACTION_MOVE触发
-        public boolean onScroll(MotionEvent motion1, MotionEvent motion2, float distanceX, float distanceY) {
-
-            float oldX = motion1.getX();
-            Display display = getWindowManager().getDefaultDisplay();
-            int width = display.getWidth();
-            if (oldX > width * 2.0 / 3) {     //右边滑动
-                ;
-            } else if (oldX < width / 3.0) { //左边滑动 设置声音
-                int pHeight = mSoundSeekBar.getMeasuredHeight();
-                int max = mSoundSeekBar.getMax();
-                int pro = mSoundSeekBar.getProgress();
-                pro += distanceY * max / pHeight;
-                pro = pro < max ? pro : max;
-                pro = pro >= 0 ? pro : 0;
-                mSoundSeekBar.setProgress(pro);
-                updateVolumn();
-            }
-
-            return true;
-        }
-
-        public boolean onDown(MotionEvent e) {
-            return true;
-        }
-
-        public void onShowPress(MotionEvent e) {
-        }
-
-        public boolean onSingleTapUp(MotionEvent e) {
-            setVideoControlVisibility();
-            return true;
-        }
-
-        public void onLongPress(MotionEvent e) {
-        }
-
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-                               float velocityY) {
-            return true;
-        }
-    }
-
-    private void updateVolumn() {
-
-        if (mSoundSeekBar == null) {
-            return;
-        }
-        int progress = mSoundSeekBar.getProgress();
-        int max = mSoundSeekBar.getMax();
-        int sound = progress * mMaxSound / max;
+    @Override
+    public void updateVolum(float percent) {
+        mSoundSeekBar.setProgress((int) (percent * mSoundSeekBar.getMax()));
+        int sound = (int) (SYSTEM_MAX_SOUND * percent);
         mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, sound, AudioManager.FLAG_PLAY_SOUND);
     }
 
-    //Todo:
-    private void updatePlayerSeekEnable() {
-        /*
-        if(UGirlApplication.getSession().isLogined()){
-            mVideoControllerView.enableSeek(true);
-            zoVideoController.enableSeek(true);
-        }else{
-            mVideoControllerView.enableSeek(false);
-            zoVideoController.enableSeek(false);
-        }
-        */
+    @Override
+    public void updateVolumBy(int distanceX, int distanceY) {
+        int height = mSoundSeekBar.getMeasuredHeight();
+        int max = mSoundSeekBar.getMax();
+        int pro = mSoundSeekBar.getProgress();
+        pro += distanceY * max / height;
+        pro = pro < max ? pro : max;
+        pro = pro >= 0 ? pro : 0;
+        updateVolum((float) pro / max);
     }
 
-    private IMediaPlayer mediaPlayerControl = new MyMediaPlayerControl();
+    private IMediaPlayer mediaPlayerControl = new MediaPlayerControl();
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.main_videoview_contianer:
-                setVideoControlVisibility();
-                break;
-            case R.id.back:
-                mediaPlayerControl.toggleFullScreen();
-                break;
-            case R.id.always_on_top:
-                setLockState();
-                break;
-            case R.id.not_always_on_top:
-                setLockState();
-                break;
-        }
-
+    @OnClick(R.id.back)
+    void toggle() {
+        mediaPlayerControl.toggleFullScreen();
     }
 
     private void cleanupAndFinish() {
@@ -336,7 +256,7 @@ public class VideoActivity extends BaseActivity implements View.OnClickListener 
             mSurfaceview.getHolder().removeCallback(mSufaceCallback);
             mSurfaceview = null;
             mPlayer.setDisplay(null);
-            ((MyMediaPlayerControl) (mediaPlayerControl)).stop();
+            ((MediaPlayerControl) (mediaPlayerControl)).stop();
             mPlayer.release();
             mPlayer.setOnCompletionListener(null);
         }
@@ -350,35 +270,40 @@ public class VideoActivity extends BaseActivity implements View.OnClickListener 
         mGestureDetector = null;
     }
 
-    private void setLockState() {
-        ziIsAlwaysOnTop = !ziIsAlwaysOnTop;
-        if (ziIsAlwaysOnTop) {
-            findViewById(R.id.always_on_top).setVisibility(View.VISIBLE);
-            findViewById(R.id.not_always_on_top).setVisibility(View.GONE);
-        } else {
-            findViewById(R.id.always_on_top).setVisibility(View.GONE);
-            findViewById(R.id.not_always_on_top).setVisibility(View.VISIBLE);
-
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
-        }
+    @OnClick(R.id.always_on_top)
+    void setAlwaysOntop() {
+        mOnTop = true;
+        mOntopView.setVisibility(View.VISIBLE);
+        mNotOntopView.setVisibility(View.GONE);
     }
+
+    @OnClick(R.id.not_always_on_top)
+    void setNotOntop() {
+        mOntopView.setVisibility(View.GONE);
+        mNotOntopView.setVisibility(View.VISIBLE);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+    }
+
+    @BindView(R.id.always_on_top)
+    View mOntopView;
+
+    @BindView(R.id.not_always_on_top)
+    View mNotOntopView;
 
     private SurfaceHolder.Callback mSufaceCallback = new SurfaceHolder.Callback() {
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             mPlayer.setDisplay(holder);
-            //holder.setFormat(PixelFormat.OPAQUE);
             mSurfaceview.setZOrderOnTop(false);
-
             if (mVideoUri == null) {
-                //requestFreeVideoData(); //Fixme
+                //requestFreeVideoData(); //Todo: 找一个可用的uri
                 return;
             } else {
                 if (mPlayingWhenPause) {
                     mPlayingWhenPause = false;
-
                     if (mediaPlayerControl.isPlaying() == false) {
-                        doPauseResume();
+                        pause();
                     }
                 }
             }
@@ -393,11 +318,28 @@ public class VideoActivity extends BaseActivity implements View.OnClickListener 
         }
     };
 
-    private void doPauseResume() {
+    private void pause() {
         mVideoControllerView.pause();
     }
 
-    private class MyMediaPlayerControl implements IMediaPlayer {
+    @OnClick(R.id.main_videoview_contianer)
+    void setVideoControlVisibility() {
+        if (mVideoControllerView == null) {
+            return;
+        }
+        if (mVideoControllerView.getVisibility() == View.VISIBLE) {
+            mSoundView.setVisibility(View.GONE);
+            mVideoControllerView.hide();
+        } else {
+            if (mSoundView.getVisibility() != View.VISIBLE) {
+                mSoundView.setVisibility(View.VISIBLE);
+            }
+            mVideoControllerView.show();
+            mSoundView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private class MediaPlayerControl implements IMediaPlayer {
         public void stop() {
             try {
                 mPlayer.stop();
@@ -408,18 +350,16 @@ public class VideoActivity extends BaseActivity implements View.OnClickListener 
 
         @Override
         public void toggleFullScreen() {
-             /*
-                if(!ziIsAlwaysOnTop){
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
-                    mLandscapeMode=getResources().getConfiguration().orientation==Configuration.ORIENTATION_LANDSCAPE;
-                }else{
-                    if(mLandscapeMode){
-                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    }else{
-                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                    }
+            if (!mOnTop) {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+                mLandscapeMode = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+            } else {
+                if (mLandscapeMode) {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                } else {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 }
-                */
+            }
             setVideoControlVisibility();
         }
 
@@ -453,16 +393,10 @@ public class VideoActivity extends BaseActivity implements View.OnClickListener 
         @Override
         public boolean isPlaying() {
             try {
-                boolean b = mPlayer.isPlaying();
-                return b;
+                return mPlayer.isPlaying();
             } catch (IllegalStateException e) {
                 return false;
             }
-        }
-
-        @Override
-        public boolean isFullScreen() {
-            return true;
         }
 
         @Override
@@ -488,6 +422,11 @@ public class VideoActivity extends BaseActivity implements View.OnClickListener 
         }
 
         @Override
+        public boolean isFullScreen() {
+            return true;
+        }
+
+        @Override
         public int getBufferPercentage() {
             return 0;
         }
@@ -507,23 +446,4 @@ public class VideoActivity extends BaseActivity implements View.OnClickListener 
             return true;
         }
     }
-
-    private void setVideoControlVisibility() {
-        if (mVideoControllerView == null) {
-            return;
-        }
-        if (mVideoControllerView.getVisibility() == View.VISIBLE) {
-            mSoundView.setVisibility(View.GONE);
-            mVideoControllerView.hide();
-
-        } else {
-            if (mSoundView.getVisibility() != View.VISIBLE) {
-                mSoundView.setVisibility(View.VISIBLE);
-            }
-
-            mVideoControllerView.show(-1);
-            mSoundView.setVisibility(View.VISIBLE);
-        }
-    }
-
 }
