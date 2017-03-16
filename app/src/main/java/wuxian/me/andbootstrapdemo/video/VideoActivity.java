@@ -26,6 +26,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import wuxian.me.andbootstrap.BaseActivity;
+import wuxian.me.andbootstrap.video.IMediaPlayer;
+import wuxian.me.andbootstrap.video.IVolumListener;
+import wuxian.me.andbootstrap.video.VideoControllerView;
+import wuxian.me.andbootstrap.video.VolumGestureListener;
 import wuxian.me.andbootstrapdemo.R;
 import wuxian.me.andbootstrapdemo.utils.view.VerticalSeekBar;
 

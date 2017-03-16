@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="blackmask">#af000000</color>
+
+    <color name="lightpink">#F6D7D5</color>
+    <color name="dark_pink">#d43173</color>
+    <color name="pink">#F43173</color>
+    <color name="black_overlay">#66000000</color>
+    <color name="littleblack">#7f7f7f7f</color>
+</resources>

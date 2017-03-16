@@ -1,4 +1,4 @@
-package wuxian.me.andbootstrapdemo.video;
+package wuxian.me.andbootstrap.video;
 
 import android.support.annotation.NonNull;
 import android.view.View;

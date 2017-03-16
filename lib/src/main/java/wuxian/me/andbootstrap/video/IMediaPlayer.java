@@ -1,4 +1,4 @@
-package wuxian.me.andbootstrapdemo.video;
+package wuxian.me.andbootstrap.video;
 
 /**
  * Created by wuxian on 16/3/2017.

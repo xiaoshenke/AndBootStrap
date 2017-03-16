@@ -1,4 +1,4 @@
-package wuxian.me.andbootstrapdemo.video;
+package wuxian.me.andbootstrap.video;
 
 import android.os.Handler;
 import android.os.Message;

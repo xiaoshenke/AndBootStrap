@@ -1,4 +1,4 @@
-package wuxian.me.andbootstrapdemo.video;
+package wuxian.me.andbootstrap.video;
 
 import android.view.View;
 import android.widget.ProgressBar;

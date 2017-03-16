@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package wuxian.me.andbootstrapdemo.video;
+package wuxian.me.andbootstrap.video;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -41,10 +41,8 @@ import android.widget.TextView;
 import java.util.Formatter;
 import java.util.Locale;
 
-import wuxian.me.andbootstrapdemo.R;
+import wuxian.me.andbootstrap.R;
 
-import static wuxian.me.andbootstrapdemo.video.VideoProgressHandler.MESSAGE_FADE_OUT;
-import static wuxian.me.andbootstrapdemo.video.VideoProgressHandler.MESSGAE_SHOW_PROGRESS;
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class VideoControllerView extends FrameLayout {
@@ -174,7 +172,7 @@ public class VideoControllerView extends FrameLayout {
         updatePauseView();
         updateFullscreenView();
 
-        mHandler.sendEmptyMessage(MESSGAE_SHOW_PROGRESS);
+        mHandler.sendEmptyMessage(VideoProgressHandler.MESSGAE_SHOW_PROGRESS);
         this.setVisibility(VISIBLE);
 
         if (!origin) {
@@ -183,8 +181,8 @@ public class VideoControllerView extends FrameLayout {
             this.setVisibility(VISIBLE);
         }
 
-        Message msg = mHandler.obtainMessage(MESSAGE_FADE_OUT);
-        mHandler.removeMessages(MESSAGE_FADE_OUT);
+        Message msg = mHandler.obtainMessage(VideoProgressHandler.MESSAGE_FADE_OUT);
+        mHandler.removeMessages(VideoProgressHandler.MESSAGE_FADE_OUT);
         mHandler.sendMessageDelayed(msg, DEFAULT_CONTROLLER_SHOWTIME);
     }
 
@@ -197,7 +195,7 @@ public class VideoControllerView extends FrameLayout {
             return;
         }
         mAnchorView.removeView(this);
-        mHandler.removeMessages(MESSGAE_SHOW_PROGRESS);
+        mHandler.removeMessages(VideoProgressHandler.MESSGAE_SHOW_PROGRESS);
         this.clearAnimation();
         this.setVisibility(GONE);
         mShowing = false;
@@ -224,7 +222,7 @@ public class VideoControllerView extends FrameLayout {
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     mAnchorView.removeView(controlbar);
-                    mHandler.removeMessages(MESSGAE_SHOW_PROGRESS);
+                    mHandler.removeMessages(VideoProgressHandler.MESSGAE_SHOW_PROGRESS);
                 }
 
                 @Override
@@ -299,7 +297,7 @@ public class VideoControllerView extends FrameLayout {
         }
         if (mPlayer.isPlaying()) {
             mPlayer.pause();
-            mHandler.removeMessages(MESSAGE_FADE_OUT);  //暂停状态下不自动隐藏
+            mHandler.removeMessages(VideoProgressHandler.MESSAGE_FADE_OUT);  //暂停状态下不自动隐藏
         } else {
             mPlayer.start();
             show();
@@ -376,7 +374,7 @@ public class VideoControllerView extends FrameLayout {
             show();
 
             mDragging = true;
-            mHandler.removeMessages(MESSGAE_SHOW_PROGRESS);
+            mHandler.removeMessages(VideoProgressHandler.MESSGAE_SHOW_PROGRESS);
         }
 
         public void onProgressChanged(SeekBar bar, int progress, boolean fromUser) {
@@ -401,7 +399,7 @@ public class VideoControllerView extends FrameLayout {
             updateProgress();
             updatePauseView();
             show();
-            mHandler.sendEmptyMessage(MESSGAE_SHOW_PROGRESS);
+            mHandler.sendEmptyMessage(VideoProgressHandler.MESSGAE_SHOW_PROGRESS);
         }
     };
 
