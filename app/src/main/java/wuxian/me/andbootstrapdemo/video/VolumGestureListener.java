@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.WindowManager;
 
 /**
@@ -13,8 +14,14 @@ import android.view.WindowManager;
 
 public class VolumGestureListener extends GestureDetector.SimpleOnGestureListener {
 
+    private View.OnClickListener mOnClickListener;
+
     private IVolumListener mListener;
     private int mScreenWidth;
+
+    public void setOnClickListener(View.OnClickListener onClickListener) {
+        mOnClickListener = onClickListener;
+    }
 
     public VolumGestureListener(@NonNull Context context, @NonNull IVolumListener volumListener) {
         this.mListener = volumListener;
@@ -35,7 +42,9 @@ public class VolumGestureListener extends GestureDetector.SimpleOnGestureListene
     }
 
     public boolean onSingleTapUp(MotionEvent e) {
-        //setVideoControlVisibility(); // --> Todo
+        if (mOnClickListener != null) {
+            mOnClickListener.onClick(null);
+        }
         return true;
     }
 }

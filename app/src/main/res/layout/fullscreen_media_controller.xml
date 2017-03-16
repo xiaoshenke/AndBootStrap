@@ -5,10 +5,10 @@
     android:layout_height="wrap_content"
     android:background="@color/blackmask"
     android:orientation="vertical"
-    android:layout_alignParentBottom="true"
     android:paddingBottom="5dp">
 
     <SeekBar
+        android:progress="0"
         android:id="@+id/mediacontroller_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,7 +20,6 @@
         android:maxHeight="2dp"
         android:progressDrawable="@drawable/seekbar_video"
         style="@android:style/Widget.ProgressBar.Horizontal"
-
         />
 
     <RelativeLayout
@@ -46,6 +45,8 @@
                 android:contentDescription="btnPause" />
 
             <TextView
+                android:singleLine="true"
+                android:ellipsize="end"
                 android:id="@+id/time_current"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -67,6 +68,8 @@
                 android:textColor="@android:color/white" />
 
             <TextView
+                android:singleLine="true"
+                android:ellipsize="end"
                 android:id="@+id/time"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -77,44 +80,15 @@
                 android:text="00:00:00" />
         </LinearLayout>
 
-        <!-- 右下角按钮 -->
-        <LinearLayout
+        <ImageButton
+            android:id="@+id/fullscreen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@mipmap/icon_video_zoom_out"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/btnComment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="8dp"
-                android:layout_gravity="center_vertical"
-                android:src="@mipmap/icon_chat_comment"
-                android:background="@android:color/transparent"
-                android:contentDescription="btnComment" />
-
-            <ImageButton
-                android:id="@+id/live_comment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="8dp"
-                android:layout_gravity="center_vertical"
-                android:src="@mipmap/icon_chat_livecomt_on"
-                android:background="@android:color/transparent"
-                android:contentDescription="subtitle" />
-
-            <ImageButton
-                android:id="@+id/fullscreen"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/icon_video_zoom_out"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="8dp"
-                android:layout_gravity="center_vertical"
-                android:background="@android:color/transparent"
-                android:contentDescription="fullscreen" />
-        </LinearLayout>
+            android:layout_marginRight="8dp"
+            android:layout_gravity="center_vertical"
+            android:background="@android:color/transparent"
+            android:contentDescription="fullscreen" />
     </RelativeLayout>
 </LinearLayout>

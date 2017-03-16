@@ -59,12 +59,12 @@ public class VideoControllerView extends FrameLayout {
     private ImageButton mPauseButton;
     private ImageButton mFullscreenButton;
 
-
     private Handler mHandler = new VideoProgressHandler(this);
 
     private boolean mDragging = false;
     private boolean mShowing = false;
     private Formatter mFormatter;
+    StringBuilder formatBuilder;
 
     public IMediaPlayer player() {
         return mPlayer;
@@ -81,8 +81,8 @@ public class VideoControllerView extends FrameLayout {
     public VideoControllerView(Context context) {
         super(context);
 
-        StringBuilder formatBuilder = new StringBuilder();
-        formatBuilder.setLength(0);
+        formatBuilder = new StringBuilder();
+
         mFormatter = new Formatter(formatBuilder, Locale.getDefault());
     }
 
@@ -91,7 +91,7 @@ public class VideoControllerView extends FrameLayout {
         removeAllViews();
 
         LayoutParams lp = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
+                ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM);
         addView(makeControllerView(), lp);
     }
 
@@ -245,6 +245,7 @@ public class VideoControllerView extends FrameLayout {
         int minutes = (totalSeconds / 60) % 60;
         int hours = totalSeconds / 3600;
 
+        formatBuilder.setLength(0);
         return mFormatter.format("%02d:%02d:%02d", hours, minutes, seconds).toString();
     }
 

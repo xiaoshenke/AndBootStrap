@@ -11,4 +11,5 @@ public interface IVolumListener {
 
     //根据移动距离来设置
     void updateVolumBy(int distanceX, int distanceY);
+
 }

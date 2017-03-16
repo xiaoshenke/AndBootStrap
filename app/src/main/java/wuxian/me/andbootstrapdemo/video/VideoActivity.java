@@ -124,6 +124,9 @@ public class VideoActivity extends BaseActivity implements IVolumListener {
     }
 
     private void playVideo() {
+        if (mVideoUri == null) {
+            return;
+        }
         try {
             mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mPlayer.setDataSource(this, mVideoUri);
@@ -143,7 +146,14 @@ public class VideoActivity extends BaseActivity implements IVolumListener {
     private void initView() {
         mSurfaceview.getHolder().addCallback(mSufaceCallback);
 
-        mGestureDetector = new GestureDetector(this, new VolumGestureListener(this, this));
+        VolumGestureListener listener = new VolumGestureListener(this, this);
+        listener.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setVideoControlVisibility();
+            }
+        });
+        mGestureDetector = new GestureDetector(this, listener);
 
         mVideoControllerView = new VideoControllerView(this);
         mVideoControllerView.setAnchorView(mVideoContainer);

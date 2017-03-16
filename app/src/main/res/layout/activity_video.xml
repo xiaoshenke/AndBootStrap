@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/video_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -74,9 +75,7 @@
             android:src="@mipmap/icon_fullscreen_unlock" />
     </RelativeLayout>
 
-    <?xml version="1.0" encoding="utf-8"?>
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:ugrils="http://schemas.android.com/apk/res-auto"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -88,10 +87,10 @@
             android:paddingBottom="5dp"
             android:layout_marginLeft="10dp"
             android:background="@color/black_overlay"
-            android:layout_gravity="center_vertical"
-            android:gravity="center">
+            android:layout_gravity="center_vertical">
 
             <ImageButton
+                android:layout_centerHorizontal="true"
                 android:id="@+id/sound_on"
                 android:layout_alignParentBottom="true"
                 android:layout_width="wrap_content"
@@ -100,16 +99,17 @@
                 android:src="@mipmap/icon_sound_on" />
 
             <wuxian.me.andbootstrapdemo.utils.view.VerticalSeekBar
+                android:layout_centerHorizontal="true"
                 android:id="@+id/video_seekbar"
                 android:layout_above="@+id/sound_on"
-                android:layout_width="10dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:max="100"
-                android:progress="20"
+                android:progress="0"
                 android:maxWidth="2dp"
                 android:minWidth="2dp"
-                android:progressDrawable="@drawable/progressbar_video_sound" />
-            <!-- app:thumb="@drawable/icon_thumb" -->
+                android:progressDrawable="@drawable/progressbar_video_sound"
+                app:thumb="@mipmap/icon_thumb" />
         </RelativeLayout>
 
     </FrameLayout>
