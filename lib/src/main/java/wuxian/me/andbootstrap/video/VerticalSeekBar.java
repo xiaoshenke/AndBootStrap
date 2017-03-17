@@ -1,4 +1,4 @@
-package wuxian.me.andbootstrapdemo.utils.view;
+package wuxian.me.andbootstrap.video;
 
 
 import android.content.Context;
@@ -11,7 +11,8 @@ import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.widget.ProgressBar;
 
-import wuxian.me.andbootstrapdemo.R;
+import wuxian.me.andbootstrap.R;
+
 
 /**
  * Created by wuxian on 2015/4/29.

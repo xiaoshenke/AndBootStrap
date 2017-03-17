@@ -45,11 +45,11 @@ import wuxian.me.andbootstrap.R;
 
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-public class VideoControllerView extends FrameLayout {
+public class VideoControllerView2 extends FrameLayout {
     private static final String TAG = "VideoControllerView";
     private static final int DEFAULT_CONTROLLER_SHOWTIME = 3000; //controller的消失时间
     private ViewGroup mAnchorView;
-    private IMediaPlayer mPlayer;
+    private VideoView mPlayer;
 
     private ProgressBar mProgress;
     private TextView mEndTime;
@@ -64,7 +64,7 @@ public class VideoControllerView extends FrameLayout {
     private Formatter mFormatter;
     StringBuilder formatBuilder;
 
-    public IMediaPlayer player() {
+    public VideoView player() {
         return mPlayer;
     }
 
@@ -76,7 +76,7 @@ public class VideoControllerView extends FrameLayout {
         return mDragging;
     }
 
-    public VideoControllerView(Context context) {
+    public VideoControllerView2(Context context) {
         super(context);
 
         formatBuilder = new StringBuilder();
@@ -131,7 +131,7 @@ public class VideoControllerView extends FrameLayout {
         mCurrentTime = (TextView) view.findViewById(R.id.time_current);
     }
 
-    public void setMediaPlayer(@NonNull IMediaPlayer player) {
+    public void setMediaPlayer(@NonNull VideoView player) {
         mPlayer = player;
 
         updatePauseView();
@@ -284,7 +284,7 @@ public class VideoControllerView extends FrameLayout {
         if (mFullscreenButton == null || mPlayer == null) {
             return;
         }
-        if (mPlayer.isFullScreen()) {
+        if (mPlayer.isLandscape()) {
             mFullscreenButton.setImageResource(R.mipmap.icon_video_zoom_out);
         } else {
             mFullscreenButton.setImageResource(R.mipmap.icon_video_zoom_in);
@@ -296,7 +296,7 @@ public class VideoControllerView extends FrameLayout {
             return;
         }
         if (mPlayer.isPlaying()) {
-            mPlayer.pause();
+            mPlayer.pausePlay();
             mHandler.removeMessages(VideoProgressHandler.MESSAGE_FADE_OUT);  //暂停状态下不自动隐藏
         } else {
             mPlayer.start();
@@ -305,11 +305,14 @@ public class VideoControllerView extends FrameLayout {
         updatePauseView();
     }
 
+    //Todo
     private void toggleFullscreen() {
+        /*
         if (mPlayer == null) {
             return;
         }
         mPlayer.toggleFullScreen();
+        */
     }
 
     @Override
@@ -354,7 +357,7 @@ public class VideoControllerView extends FrameLayout {
         } else if (keyCode == KeyEvent.KEYCODE_MEDIA_STOP
                 || keyCode == KeyEvent.KEYCODE_MEDIA_PAUSE) {
             if (uniqueDown && mPlayer.isPlaying()) {
-                mPlayer.pause();
+                mPlayer.pausePlay();
                 updatePauseView();
                 show();
             }
@@ -419,13 +422,13 @@ public class VideoControllerView extends FrameLayout {
     @Override
     public void onInitializeAccessibilityEvent(AccessibilityEvent event) {
         super.onInitializeAccessibilityEvent(event);
-        event.setClassName(VideoControllerView.class.getName());
+        event.setClassName(VideoControllerView2.class.getName());
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
         super.onInitializeAccessibilityNodeInfo(info);
-        info.setClassName(VideoControllerView.class.getName());
+        info.setClassName(VideoControllerView2.class.getName());
     }
 }

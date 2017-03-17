@@ -98,7 +98,7 @@
                 android:background="@android:color/transparent"
                 android:src="@mipmap/icon_sound_on" />
 
-            <wuxian.me.andbootstrapdemo.utils.view.VerticalSeekBar
+            <wuxian.me.andbootstrap.video.VerticalSeekBar
                 android:layout_centerHorizontal="true"
                 android:id="@+id/video_seekbar"
                 android:layout_above="@+id/sound_on"

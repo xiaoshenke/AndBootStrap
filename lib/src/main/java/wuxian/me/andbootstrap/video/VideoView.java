@@ -1,8 +1,6 @@
 package wuxian.me.andbootstrap.video;
 
 import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -26,6 +24,8 @@ import wuxian.me.andbootstrap.R;
 
 /**
  * Created by wuxian on 17/3/2017.
+ *
+ * 协调@MediaPlayer,SoundView,VideoControllerView
  */
 
 public class VideoView implements IVolumListener {
@@ -34,7 +34,7 @@ public class VideoView implements IVolumListener {
     private MediaPlayer mPlayer;
     private AudioManager mAudioManager;
 
-    private VideoControllerView mVideoControllerView;
+    private VideoControllerView2 mVideoControllerView;
     private GestureDetector mGestureDetector;
 
     private View mView;
@@ -92,8 +92,47 @@ public class VideoView implements IVolumListener {
     };
 
     //Todo
-    public void startPlay(@NonNull Uri uri) {
+    public void destroy() {
+        ;
+    }
 
+    //Todo
+    public void pausePlay() {
+        ;
+    }
+
+    //Todo
+    public void start() {
+        ;
+    }
+
+    //Todo
+    public int getDuration() {
+        return -1;
+    }
+
+    //Todo
+    public int getBufferPercentage() {
+        return -1;
+    }
+
+    //Todo
+    public boolean canPause() {
+        return true;
+    }
+
+    //Todo
+    public int getCurrentPosition() throws IllegalStateException {
+        return -1;
+    }
+
+    //Todo
+    public void seekTo(int position) {
+
+    }
+
+    //Todo
+    public void startPlay(@NonNull Uri uri) {
         try {
             mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mPlayer.setDataSource(mContext, uri);
@@ -110,10 +149,19 @@ public class VideoView implements IVolumListener {
         }
     }
 
-    private boolean mHorizonMode = false;
+    //Todo
+    public boolean isPlaying() {
+        return true;
+    }
 
-    public void setHorizonMode(boolean horizonMode) {
-        mHorizonMode = horizonMode;
+    private boolean mLandscapeMode = false;
+
+    public boolean isLandscape() {
+        return mLandscapeMode;
+    }
+
+    public void setLandscapeMode(boolean horizonMode) {
+        mLandscapeMode = horizonMode;
     }
 
     private BaseControllerView mControllerView;
@@ -129,9 +177,9 @@ public class VideoView implements IVolumListener {
         return mView;
     }
 
-    private void updateSurfaceView() {
+    private void updateSurfaceView(boolean landscape) {
         FrameLayout.LayoutParams fllp;
-        if (true/*mLandscapeMode*/) {
+        if (mLandscapeMode) {
             fllp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         } else {
             int width = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getWidth();
@@ -150,15 +198,15 @@ public class VideoView implements IVolumListener {
 
     private void updateOtherView() {
         updateVideoContainerView();
-        updateSurfaceView();
-        updateSoundView();
+        updateSurfaceView(mLandscapeMode);
+        updateSoundView(mLandscapeMode);
     }
 
-    private void updateSoundView() {
+    private void updateSoundView(boolean landscape) {
         FrameLayout.LayoutParams fllp;
         Display display = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         int height;
-        if (true/*!mLandscapeMode*/) {
+        if (!landscape) {
             height = display.getWidth() * 9 * 4 / (16 * 5);  //16比9视频高度的4/5
             //height=display.getHeight()-dp2px(65+65+15);
             height = height > 480 ? 480 : height;
@@ -206,8 +254,10 @@ public class VideoView implements IVolumListener {
     private ViewGroup mVideoContainer;
     private IMediaPlayer mediaPlayerControl = new MediaPlayerControl();
     private View mSoundView;
+    VerticalSeekBar mSoundSeekBar;
 
     private void initView(View view) {
+        mSoundSeekBar = (VerticalSeekBar) view.findViewById(R.id.video_seekbar);
         mSurfaceview = (SurfaceView) view.findViewById(R.id.video);
         mSurfaceview.getHolder().addCallback(mSufaceCallback);
 
@@ -223,11 +273,11 @@ public class VideoView implements IVolumListener {
         });
         mGestureDetector = new GestureDetector(mContext, listener);
 
-        mVideoControllerView = new VideoControllerView(mContext);
+        mVideoControllerView = new VideoControllerView2(mContext);
 
         mVideoContainer = (ViewGroup) view.findViewById(R.id.main_videoview_contianer);
         mVideoControllerView.setAnchorView(mVideoContainer);
-        mVideoControllerView.setMediaPlayer(mediaPlayerControl);
+        mVideoControllerView.setMediaPlayer(this);
         mVideoControllerView.setVisibility(View.GONE);
 
         mVideoContainer.setOnClickListener(null);
@@ -248,12 +298,20 @@ public class VideoView implements IVolumListener {
 
     @Override
     public void updateVolum(float percent) {
-
+        mSoundSeekBar.setProgress((int) (percent * mSoundSeekBar.getMax()));
+        int sound = (int) (SYSTEM_MAX_SOUND * percent);
+        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, sound, AudioManager.FLAG_PLAY_SOUND);
     }
 
     @Override
     public void updateVolumBy(int distanceX, int distanceY) {
-
+        int height = mSoundSeekBar.getMeasuredHeight();
+        int max = mSoundSeekBar.getMax();
+        int pro = mSoundSeekBar.getProgress();
+        pro += distanceY * max / height;
+        pro = pro < max ? pro : max;
+        pro = pro >= 0 ? pro : 0;
+        updateVolum((float) pro / max);
     }
 
     public interface OnVideoPlay {

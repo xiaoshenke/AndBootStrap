@@ -13,15 +13,15 @@ public class VideoProgressHandler extends Handler {
     public static final int MESSAGE_FADE_OUT = 101;
     public static final int MESSGAE_SHOW_PROGRESS = 102;
 
-    private final WeakReference<VideoControllerView> mControllerView;
+    private final WeakReference<VideoControllerView2> mControllerView;
 
-    VideoProgressHandler(VideoControllerView view) {
-        mControllerView = new WeakReference<VideoControllerView>(view);
+    VideoProgressHandler(VideoControllerView2 view) {
+        mControllerView = new WeakReference<VideoControllerView2>(view);
     }
 
     @Override
     public void handleMessage(Message msg) {
-        VideoControllerView view = mControllerView.get();
+        VideoControllerView2 view = mControllerView.get();
         if (view == null || view.player() == null) {
             return;
         }
