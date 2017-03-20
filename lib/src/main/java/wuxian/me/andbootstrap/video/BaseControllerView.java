@@ -16,7 +16,34 @@ import android.widget.SeekBar;
 public abstract class BaseControllerView {
 
     protected Context mContext;
-    private VideoView mPlayer;
+    protected VideoView mPlayer;
+
+    public VideoView player() {
+        return mPlayer;
+    }
+
+    protected int updateProgress() {
+        if (mPlayer == null || mDragging) {
+            return 0;
+        }
+        try {
+            int position = mPlayer.getCurrentPosition();
+            int duration = mPlayer.getDuration();
+            if (duration > 0) {
+                long pos = 1000L * position / duration;
+                getProgressbar().setProgress((int) pos);
+            }
+            int percent = mPlayer.getBufferPercentage();
+            getProgressbar().setSecondaryProgress(percent * 10);
+            return position;
+        } catch (IllegalStateException e) {
+            return 0;
+        }
+    }
+
+    protected Context context() {
+        return mContext;
+    }
 
     protected
     @NonNull
@@ -25,9 +52,9 @@ public abstract class BaseControllerView {
     public BaseControllerView(@NonNull Context context, @NonNull VideoView player) {
         mContext = context;
         mPlayer = player;
-
-        addControlFunctionToView(initView());
     }
+
+    protected abstract boolean showing();
 
     private boolean mDragging = false;
 
@@ -46,7 +73,6 @@ public abstract class BaseControllerView {
             show();
             mDragging = true;
             onStartDragProgressbar();
-            //mHandler.removeMessages(VideoProgressHandler.MESSGAE_SHOW_PROGRESS);
         }
 
         public void onProgressChanged(SeekBar bar, int progress, boolean fromUser) {
@@ -59,15 +85,11 @@ public abstract class BaseControllerView {
 
             long duration = mPlayer.getDuration();
             long pos = duration * progress;
-            long newposition = pos / 1000;
+            long newposition = pos / getProgressbar().getMax();
             mPlayer.start();
             mPlayer.seekTo((int) newposition);
 
             BaseControllerView.this.onProgressChanged(progress);
-            /*
-            if (mCurrentTime != null)
-                mCurrentTime.setText(format((int) newposition));
-                */
         }
 
         public void onStopTrackingTouch(SeekBar bar) {
@@ -75,28 +97,35 @@ public abstract class BaseControllerView {
             show();
 
             onStopDragProgressbar();
-            /*
-            updateProgress();
-            updatePauseView();
-            mHandler.sendEmptyMessage(VideoProgressHandler.MESSGAE_SHOW_PROGRESS);
-            */
         }
     };
 
-    private void addControlFunctionToView(View view) {
+    private View addControlFunctionToView(View view) {
         ((SeekBar) getProgressbar()).setOnSeekBarChangeListener(mSeekListener);
+        return view;
     }
 
     protected
     @NonNull
     abstract View initView();
 
+    private View mView;
+
     //init view
-    public abstract
+    public final
     @NonNull
-    View getView();
+    View getView() {
+        if (mView != null) {
+            return mView;
+        }
+
+        mView = addControlFunctionToView(initView());
+        return mView;
+    }
 
     public abstract void show();
 
     public abstract void hide();
+
+    public abstract void hideImmediate();
 }

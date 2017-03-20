@@ -5,6 +5,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -34,7 +35,7 @@ public class VideoView implements IVolumListener {
     private MediaPlayer mPlayer;
     private AudioManager mAudioManager;
 
-    private VideoControllerView2 mVideoControllerView;
+    private BaseControllerView mVideoControllerView;
     private GestureDetector mGestureDetector;
 
     private View mView;
@@ -42,8 +43,9 @@ public class VideoView implements IVolumListener {
 
     private boolean mPlayError = false;
 
-    public VideoView(@NonNull Context context) {
+    public VideoView(@NonNull Context context, @Nullable BaseControllerView controllerView) {
         this.mContext = context;
+        this.mControllerView = controllerView;
 
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         SYSTEM_MAX_SOUND = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
@@ -63,8 +65,9 @@ public class VideoView implements IVolumListener {
         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-                if (mVideoControllerView != null && mVideoControllerView.getVisibility() == View.VISIBLE) {
-                    mVideoControllerView.updatePauseView();
+                if (mVideoControllerView != null && mVideoControllerView.getView().getVisibility() == View.VISIBLE) {
+                    //Todo
+                    //mVideoControllerView.updatePauseView();
                 }
                 if (mPlayError) {
                     return;
@@ -72,6 +75,10 @@ public class VideoView implements IVolumListener {
                 return;
             }
         });
+    }
+
+    public VideoView(@NonNull Context context) {
+        this(context, null);
     }
 
     public Uri mSourceUri;
@@ -273,12 +280,15 @@ public class VideoView implements IVolumListener {
         });
         mGestureDetector = new GestureDetector(mContext, listener);
 
-        mVideoControllerView = new VideoControllerView2(mContext);
+        if (mVideoControllerView == null) {
+            mVideoControllerView = new DefaultControllerView(mContext, this);
+        }
 
         mVideoContainer = (ViewGroup) view.findViewById(R.id.main_videoview_contianer);
-        mVideoControllerView.setAnchorView(mVideoContainer);
-        mVideoControllerView.setMediaPlayer(this);
-        mVideoControllerView.setVisibility(View.GONE);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM);
+        mVideoContainer.addView(mVideoControllerView.getView(), lp);
+        mVideoControllerView.getView().setVisibility(View.GONE);  //刚开始不可见 --> fixme
 
         mVideoContainer.setOnClickListener(null);
         mVideoContainer.setOnTouchListener(new View.OnTouchListener() {

@@ -57,7 +57,7 @@ public class VideoControllerView2 extends FrameLayout {
     private ImageButton mPauseButton;
     private ImageButton mFullscreenButton;
 
-    private Handler mHandler = new VideoProgressHandler(this);
+    private Handler mHandler = null;//new VideoProgressHandler(this);
 
     private boolean mDragging = false;
     private boolean mShowing = false;
