@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "798528580296",
+    "firebase_url": "https://andbootstrapdemo.firebaseio.com",
+    "project_id": "andbootstrapdemo",
+    "storage_bucket": "andbootstrapdemo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:798528580296:android:e9683c275b5defae",
+        "android_client_info": {
+          "package_name": "wuxian.me.andbootstrapdemo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "798528580296-n4sl431l6e44idsl7920lf7e2obdngq0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtbUG0vG47a9xwv6--RKN0E9ZdL6lshF8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -10,6 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled = true
     }
     buildTypes {
         release {
@@ -49,8 +50,10 @@ dependencies {
     compile 'com.facebook.fresco:fresco:1.1.0'
 
     compile "com.google.guava:guava:18.0"
+    compile 'com.google.firebase:firebase-ads:10.0.1'
     compile project(':lib')
 
     compile project(':zxingscanner')
 
 }
+apply plugin: 'com.google.gms.google-services'

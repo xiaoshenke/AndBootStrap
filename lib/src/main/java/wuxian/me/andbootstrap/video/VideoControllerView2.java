@@ -45,7 +45,8 @@ import wuxian.me.andbootstrap.R;
 
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-public class VideoControllerView2 extends FrameLayout {
+public class VideoControllerView2 /*extends FrameLayout*/ {
+    /*
     private static final String TAG = "VideoControllerView";
     private static final int DEFAULT_CONTROLLER_SHOWTIME = 3000; //controller的消失时间
     private ViewGroup mAnchorView;
@@ -138,9 +139,7 @@ public class VideoControllerView2 extends FrameLayout {
         updateFullscreenView();
     }
 
-    /**
-     * Stream不支持的时候 不能进行停止或快进
-     */
+
     private void updateUnsupportedButtons() {
         if (mPlayer == null) {
             return;
@@ -172,7 +171,7 @@ public class VideoControllerView2 extends FrameLayout {
         updatePauseView();
         updateFullscreenView();
 
-        mHandler.sendEmptyMessage(VideoProgressHandler.MESSGAE_SHOW_PROGRESS);
+        mHandler.sendEmptyMessage(DefaultControllerView.VideoProgressHandler.MESSGAE_SHOW_PROGRESS);
         this.setVisibility(VISIBLE);
 
         if (!origin) {
@@ -305,14 +304,14 @@ public class VideoControllerView2 extends FrameLayout {
         updatePauseView();
     }
 
-    //Todo
+
     private void toggleFullscreen() {
-        /*
+
         if (mPlayer == null) {
             return;
         }
         mPlayer.toggleFullScreen();
-        */
+
     }
 
     @Override
@@ -431,4 +430,5 @@ public class VideoControllerView2 extends FrameLayout {
         super.onInitializeAccessibilityNodeInfo(info);
         info.setClassName(VideoControllerView2.class.getName());
     }
+    */
 }
