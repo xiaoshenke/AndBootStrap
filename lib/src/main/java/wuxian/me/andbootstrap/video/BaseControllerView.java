@@ -9,17 +9,25 @@ import android.widget.SeekBar;
 /**
  * Created by wuxian on 17/3/2017.
  * <p>
- * 封装了一个controller应该有的一些功能
- * 最基础的和VideoView交互的就是 拉取进度条,暂停
+ * 封装了一个controller拉取进度条功能
  */
 
 public abstract class BaseControllerView implements VideoView.OnVideoPlay {
 
     protected Context mContext;
-    protected VideoView mPlayer;
+    protected IPlayer mPlayer;
 
-    public VideoView player() {
+    protected Context context() {
+        return mContext;
+    }
+
+    public IPlayer player() {
         return mPlayer;
+    }
+
+    public BaseControllerView(@NonNull Context context, @NonNull IPlayer player) {
+        mContext = context;
+        mPlayer = player;
     }
 
     protected int updateProgress() {
@@ -41,31 +49,16 @@ public abstract class BaseControllerView implements VideoView.OnVideoPlay {
         }
     }
 
-    protected Context context() {
-        return mContext;
-    }
-
-    protected
     @NonNull
-    abstract ProgressBar getProgressbar();
-
-    public BaseControllerView(@NonNull Context context, @NonNull VideoView player) {
-        mContext = context;
-        mPlayer = player;
-    }
-
-    protected abstract boolean showing();
+    protected abstract ProgressBar getProgressbar();
 
     private boolean mDragging = false;
-
     protected boolean isDragging() {
         return mDragging;
     }
 
     protected abstract void onStartDragProgressbar();
-
     protected abstract void onProgressChanged(int progress);
-
     protected abstract void onStopDragProgressbar();
 
     private SeekBar.OnSeekBarChangeListener mSeekListener = new SeekBar.OnSeekBarChangeListener() {
@@ -82,20 +75,17 @@ public abstract class BaseControllerView implements VideoView.OnVideoPlay {
             if (!fromUser) {
                 return;
             }
-
             long duration = mPlayer.getDuration();
             long pos = duration * progress;
             long newposition = pos / getProgressbar().getMax();
             mPlayer.start();
             mPlayer.seekTo((int) newposition);
-
             BaseControllerView.this.onProgressChanged(progress);
         }
 
         public void onStopTrackingTouch(SeekBar bar) {
             mDragging = false;
             show();
-
             onStopDragProgressbar();
         }
     };
@@ -105,23 +95,21 @@ public abstract class BaseControllerView implements VideoView.OnVideoPlay {
         return view;
     }
 
-    protected
-    @NonNull
-    abstract View initView();
 
+    @NonNull
+    protected abstract View initView();
     private View mView;
 
-    //init view
-    public final
     @NonNull
-    View getView() {
+    public final View getView() {
         if (mView != null) {
             return mView;
         }
-
         mView = addControlFunctionToView(initView());
         return mView;
     }
+
+    protected abstract boolean showing();
 
     public abstract void show();
 

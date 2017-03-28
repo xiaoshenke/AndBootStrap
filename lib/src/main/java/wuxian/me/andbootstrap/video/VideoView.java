@@ -31,7 +31,7 @@ import wuxian.me.andbootstrap.R;
  * 协调@MediaPlayer,SurfaceView,SoundView,VideoControllerView
  */
 
-public class VideoView implements IVolumListener {
+public class VideoView implements IVolumListener, IPlayer {
     private int SYSTEM_MAX_SOUND = 0;
 
     private MediaPlayer mPlayer;
@@ -73,13 +73,14 @@ public class VideoView implements IVolumListener {
         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
+                if (mPlayError) {
+                    return;
+                }
+
                 if (mControllerView != null && mControllerView.getView().getVisibility() == View.VISIBLE) {
                     for (OnVideoPlay onVideoPlay : onVideoPlayList) {
                         onVideoPlay.onPlayEnd();
                     }
-                }
-                if (mPlayError) {
-                    return;
                 }
                 return;
             }
@@ -90,135 +91,10 @@ public class VideoView implements IVolumListener {
         this(context, null);
     }
 
-    public Uri mSourceUri;
-
-    private MediaPlayer.OnPreparedListener mPlayerPreparedListener = new MediaPlayer.OnPreparedListener() {
-        @Override
-        public void onPrepared(MediaPlayer mediaPlayer) {
-            mPlayError = false;
-            mPlayer.start();
-
-            for (OnVideoPlay onVideoPlay : onVideoPlayList) {
-                onVideoPlay.onPlayStart();
-            }
-        }
-    };
-
-    //Todo
-    public void destroy() {
-        ;
-    }
-
-    public void pausePlay() {
-        try {
-            mPlayer.pause();
-        } catch (IllegalStateException e) {
-            return;
-        }
-    }
-
-    public void start() {
-        try {
-            mPlayer.start();
-        } catch (IllegalStateException e) {
-            return;
-        }
-    }
-
-    public int getDuration() {
-        try {
-            return mPlayer.getDuration();
-        } catch (IllegalStateException e) {
-            return -1;
-        }
-    }
-
-
-    public int getBufferPercentage() {
-        return 0;
-    }
-
-
-    public boolean canPause() {
-        return true;
-    }
-
-
-    public int getCurrentPosition() throws IllegalStateException {
-        if (mPlayer == null) {
-            return 0;
-        }
-        try {
-            return mPlayer.getCurrentPosition();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-            return 0;
-        }
-    }
-
-    public void seekTo(int position) {
-        try {
-            mPlayer.seekTo(position);
-        } catch (IllegalStateException e) {
-            return;
-        }
-    }
-
-    private void maybeStartPlay() {
-        if (mSourceUri != null && mSurfaceReady) {
-            try {
-                mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                mPlayer.setDataSource(mContext, mSourceUri);
-                mPlayer.setOnPreparedListener(mPlayerPreparedListener);
-                mPlayer.prepareAsync();
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (SecurityException e) {
-                e.printStackTrace();
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void startPlay(@NonNull Uri uri) {
-        mSourceUri = uri;
-
-        maybeStartPlay();
-    }
-
-
-    public boolean isPlaying() {
-        try {
-            return mPlayer.isPlaying();
-        } catch (IllegalStateException e) {
-            return false;
-        }
-    }
-
-    private boolean mLandscapeMode = false;
-
-    public boolean isLandscape() {
-        return mLandscapeMode;
-    }
-
-    public void setLandscapeMode(boolean horizonMode) {
-        mLandscapeMode = horizonMode;
-    }
-
-    private BaseControllerView mControllerView;
-
-    public void setControllerView(@NonNull BaseControllerView controllerView) {
-        if (mControllerView != null) {  //已经设置过这个controllerview了 不用再设一个
-            return;
-        }
-        mControllerView = controllerView;
-        onVideoPlayList.add(mControllerView);
-    }
-
     public View getView() {
+        if (mView != null) {
+            return mView;
+        }
         View v = LayoutInflater.from(mContext).inflate(R.layout.view_video, null, false);
         initView(v);
         mView = v;
@@ -227,7 +103,7 @@ public class VideoView implements IVolumListener {
 
     private void updateSurfaceView(boolean landscape) {
         FrameLayout.LayoutParams fllp;
-        if (mLandscapeMode) {
+        if (landscape) {
             fllp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         } else {
             int width = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getWidth();
@@ -251,21 +127,170 @@ public class VideoView implements IVolumListener {
     }
 
     private void updateSoundView(boolean landscape) {
-        FrameLayout.LayoutParams fllp;
+        RelativeLayout.LayoutParams fllp = (RelativeLayout.LayoutParams) mSoundView.getLayoutParams();
         Display display = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         int height;
         if (!landscape) {
             height = display.getWidth() * 9 * 4 / (16 * 5);  //16比9视频高度的4/5
             height = height > 480 ? 480 : height;
-            fllp = new FrameLayout.LayoutParams(100, height);  //should calculate
+            if (fllp == null) {
+                fllp = new RelativeLayout.LayoutParams(100, height);
+            } else {
+                fllp.width = 100;
+                fllp.height = height;
+            }
         } else {
             height = display.getHeight() - (65 + 65 + 15) * 2;  //Fixme: dp2px
             height = height > 540 ? 540 : height;
-            fllp = new FrameLayout.LayoutParams(100, height);
+            if (fllp == null) {
+                fllp = new RelativeLayout.LayoutParams(100, height);
+            } else {
+                fllp.width = 100;
+                fllp.height = height;
+            }
         }
-        fllp.gravity = Gravity.CENTER_VERTICAL | Gravity.LEFT;
         mSoundView.setLayoutParams(fllp);
     }
+
+    public Uri mSourceUri;
+
+    private MediaPlayer.OnPreparedListener mPlayerPreparedListener = new MediaPlayer.OnPreparedListener() {
+        @Override
+        public void onPrepared(MediaPlayer mediaPlayer) {
+            mPlayError = false;
+            mPlayer.start();
+
+            for (OnVideoPlay onVideoPlay : onVideoPlayList) {
+                onVideoPlay.onPlayStart();
+            }
+        }
+    };
+
+    public void destroy() {
+        if (mPlayer != null) {
+            mSurfaceview.getHolder().removeCallback(mSufaceCallback);
+            mSurfaceview = null;
+            mPlayer.setDisplay(null);
+            mPlayer.stop();
+            mPlayer.release();
+            mPlayer.setOnCompletionListener(null);
+        }
+
+        if (mControllerView != null) {
+            mControllerView.hideImmediate();
+            mControllerView = null;
+        }
+        mSoundSeekBar = null;
+        mGestureDetector = null;
+
+        onVideoPlayList.clear();
+    }
+
+    public void pause() {
+        try {
+            mPlayer.pause();
+        } catch (IllegalStateException e) {
+            return;
+        }
+    }
+
+    public void start() {
+        try {
+            mPlayer.start();
+        } catch (IllegalStateException e) {
+            return;
+        }
+    }
+
+    public int getDuration() {
+        try {
+            return mPlayer.getDuration();
+        } catch (IllegalStateException e) {
+            return -1;
+        }
+    }
+
+    public int getBufferPercentage() {
+        return 0;
+    }
+
+    public boolean canPause() {
+        return true;
+    }
+
+    public int getCurrentPosition() throws IllegalStateException {
+        if (mPlayer == null) {
+            return 0;
+        }
+        try {
+            return mPlayer.getCurrentPosition();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public void seekTo(int position) {
+        try {
+            mPlayer.seekTo(position);
+        } catch (IllegalStateException e) {
+            return;
+        }
+    }
+
+    public boolean isPlaying() {
+        try {
+            return mPlayer.isPlaying();
+        } catch (IllegalStateException e) {
+            return false;
+        }
+    }
+
+    private void maybeStartPlay() {
+        if (mSourceUri != null && mSurfaceReady) {
+            try {
+                mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                mPlayer.setDataSource(mContext, mSourceUri);
+                mPlayer.setOnPreparedListener(mPlayerPreparedListener);
+                mPlayer.prepareAsync();
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void startPlay(Uri uri) {
+        mSourceUri = uri;
+
+        maybeStartPlay();
+    }
+
+    private boolean mLandscapeMode = false;
+
+    public boolean isLandscape() {
+        return mLandscapeMode;
+    }
+
+    public void setLandscapeMode(boolean horizonMode) {
+        mLandscapeMode = horizonMode;
+    }
+
+    private BaseControllerView mControllerView;
+
+    public void setControllerView(@NonNull BaseControllerView controllerView) {
+        if (mControllerView != null) {  //已经设置过这个controllerview了 不用再设一个
+            return;
+        }
+        mControllerView = controllerView;
+        onVideoPlayList.add(mControllerView);
+    }
+
 
     private boolean mSurfaceReady = false;
     private SurfaceView mSurfaceview;
@@ -277,14 +302,6 @@ public class VideoView implements IVolumListener {
             mSurfaceReady = true;
             maybeStartPlay();
 
-            /* //Todo:
-            if (mPlayingWhenPause) {
-                    mPlayingWhenPause = false;
-                    if (mediaPlayerControl.isPlaying() == false) {
-                        pause();
-                    }
-                }
-            */
         }
 
         @Override
@@ -334,6 +351,8 @@ public class VideoView implements IVolumListener {
                 return mGestureDetector.onTouchEvent(event);
             }
         });
+
+        updateOtherView();
     }
 
 

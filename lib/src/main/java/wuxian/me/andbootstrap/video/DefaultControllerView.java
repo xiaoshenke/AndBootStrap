@@ -87,7 +87,6 @@ public class DefaultControllerView extends BaseControllerView {
         int duration = mPlayer.getDuration();
         mEndTime.setText(format(duration));
         mCurrentTime.setText(format(position));
-
         return ret;
     }
 
@@ -108,7 +107,6 @@ public class DefaultControllerView extends BaseControllerView {
     }
 
     private View mView;
-
     private ProgressBar mProgress;
     private TextView mEndTime;
     private TextView mCurrentTime;
@@ -121,7 +119,7 @@ public class DefaultControllerView extends BaseControllerView {
         mPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //pause();
+                player().pause();
             }
         });
 
@@ -130,7 +128,7 @@ public class DefaultControllerView extends BaseControllerView {
         mFullscreenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //toggleFullscreen();
+                //toggleFullscreen(); //Fixme
             }
         });
 
@@ -208,7 +206,6 @@ public class DefaultControllerView extends BaseControllerView {
 
     @Override
     public void hide() {
-
         mView.clearAnimation();
         mShowing = false;
         try {

@@ -295,7 +295,7 @@ public class VideoControllerView2 /*extends FrameLayout*/ {
             return;
         }
         if (mPlayer.isPlaying()) {
-            mPlayer.pausePlay();
+            mPlayer.pause();
             mHandler.removeMessages(VideoProgressHandler.MESSAGE_FADE_OUT);  //暂停状态下不自动隐藏
         } else {
             mPlayer.start();
@@ -356,7 +356,7 @@ public class VideoControllerView2 /*extends FrameLayout*/ {
         } else if (keyCode == KeyEvent.KEYCODE_MEDIA_STOP
                 || keyCode == KeyEvent.KEYCODE_MEDIA_PAUSE) {
             if (uniqueDown && mPlayer.isPlaying()) {
-                mPlayer.pausePlay();
+                mPlayer.pause();
                 updatePauseView();
                 show();
             }

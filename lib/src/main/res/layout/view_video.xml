@@ -10,13 +10,13 @@
     <FrameLayout
         android:id="@+id/main_videoview_contianer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@color/blackmask">
 
         <SurfaceView
             android:id="@+id/video"
             android:layout_width="match_parent"
-            android:layout_height="200dp" />
+            android:layout_height="match_parent" />
 
         <ProgressBar
             android:id="@+id/product_progress"
@@ -25,92 +25,39 @@
             android:layout_gravity="center" />
     </FrameLayout>
 
+
     <RelativeLayout
-        android:id="@+id/top_menu"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@color/blackmask"
+        android:id="@+id/sound_control"
+        android:layout_width="100dp"
+        android:layout_height="250dp"
+        android:layout_gravity="center_vertical"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:background="@color/black_overlay"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp">
 
-        >
-
-        <ImageView
-            android:id="@+id/back"
+        <ImageButton
+            android:id="@+id/sound_on"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:paddingBottom="10dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="10dp"
-            android:paddingTop="10dp"
-            android:src="@mipmap/ic_back" />
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@android:color/transparent"
+            android:src="@mipmap/icon_sound_on" />
 
-        <TextView
-            android:id="@+id/content"
+        <wuxian.me.andbootstrap.video.VerticalSeekBar
+            android:id="@+id/video_seekbar"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/back"
-            android:text="Video"
-            android:textColor="@android:color/white"
-            android:textSize="20sp" />
-
-        <ImageView
-            android:id="@+id/always_on_top"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:src="@mipmap/icon_fullscreen_lock"
-            android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/not_always_on_top"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:src="@mipmap/icon_fullscreen_unlock" />
+            android:layout_height="match_parent"
+            android:layout_above="@+id/sound_on"
+            android:layout_centerHorizontal="true"
+            android:max="100"
+            android:maxWidth="2dp"
+            android:minWidth="2dp"
+            android:progress="0"
+            android:progressDrawable="@drawable/progressbar_video_sound"
+            app:thumb="@mipmap/icon_thumb" />
     </RelativeLayout>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <RelativeLayout
-            android:id="@+id/sound_control"
-            android:layout_width="100dp"
-            android:layout_height="250dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:background="@color/black_overlay"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp">
-
-            <ImageButton
-                android:id="@+id/sound_on"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:background="@android:color/transparent"
-                android:src="@mipmap/icon_sound_on" />
-
-            <wuxian.me.andbootstrap.video.VerticalSeekBar
-                android:id="@+id/video_seekbar"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_above="@+id/sound_on"
-                android:layout_centerHorizontal="true"
-                android:max="100"
-                android:maxWidth="2dp"
-                android:minWidth="2dp"
-                android:progress="0"
-                android:progressDrawable="@drawable/progressbar_video_sound"
-                app:thumb="@mipmap/icon_thumb" />
-        </RelativeLayout>
-
-    </FrameLayout>
 </RelativeLayout>
