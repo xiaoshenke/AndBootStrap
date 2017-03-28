@@ -13,7 +13,7 @@ import android.widget.SeekBar;
  * 最基础的和VideoView交互的就是 拉取进度条,暂停
  */
 
-public abstract class BaseControllerView {
+public abstract class BaseControllerView implements VideoView.OnVideoPlay {
 
     protected Context mContext;
     protected VideoView mPlayer;

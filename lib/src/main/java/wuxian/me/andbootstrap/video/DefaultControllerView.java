@@ -238,12 +238,29 @@ public class DefaultControllerView extends BaseControllerView {
 
     @Override
     public void hideImmediate() {
-
         mHandler.removeMessages(VideoProgressHandler.MESSGAE_SHOW_PROGRESS);
         mView.clearAnimation();
         mView.setVisibility(GONE);
         mShowing = false;
         return;
+    }
+
+    //Todo
+    @Override
+    public void onPlayStart() {
+
+    }
+
+    //Todo
+    @Override
+    public void onPlayEnd() {
+
+    }
+
+    //Todo
+    @Override
+    public void onPlayError() {
+
     }
 
     public static class VideoProgressHandler extends Handler {

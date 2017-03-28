@@ -2,6 +2,7 @@ package wuxian.me.andbootstrapdemo.video;
 
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -22,6 +23,7 @@ import wuxian.me.andbootstrapdemo.R;
 public class VideoActivity extends BaseActivity {
     private boolean mOnTop = false;
     private boolean mLandscapeMode = false;
+    private final String mTestUrl = "http://172.16.113.130:8081/testVideo.mp4";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,12 +33,7 @@ public class VideoActivity extends BaseActivity {
         setContentView(videoView.getView());
         ButterKnife.bind(this);
 
-        videoView.getView().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //Todo:
-            }
-        }, 2000);
+        videoView.startPlay(Uri.parse(mTestUrl));
     }
 
 
@@ -59,13 +56,6 @@ public class VideoActivity extends BaseActivity {
     private void updateSoftInputModeSetting() {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
                 | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-    }
-
-    @OnClick(R.id.back)
-    void toggle() {
-        /*
-        mediaPlayerControl.toggleFullScreen();
-        */
     }
 
     private void cleanupAndFinish() {
