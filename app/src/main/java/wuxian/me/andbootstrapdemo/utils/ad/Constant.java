@@ -1,4 +1,4 @@
-package wuxian.me.andbootstrapdemo.ad;
+package wuxian.me.andbootstrapdemo.utils.ad;
 
 /**
  * Created by wuxian on 20/3/2017.

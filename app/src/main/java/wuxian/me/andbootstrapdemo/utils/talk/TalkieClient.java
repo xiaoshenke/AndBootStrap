@@ -1,4 +1,4 @@
-package wuxian.me.andbootstrapdemo.talk;
+package wuxian.me.andbootstrapdemo.utils.talk;
 
 import android.content.Context;
 import android.media.AudioFormat;
@@ -24,7 +24,7 @@ import java.util.Arrays;
  * Created by wuxian on 11/4/2017.
  */
 
-public class TalkieClient {
+public class TalkieClient implements ITalkieClient {
     private static final String TAG = "TalkieClient";
     private String serverIp;
     private int serverPort;
@@ -214,7 +214,7 @@ public class TalkieClient {
                     serverPort = rdp.getPort();
                     Log.e(TAG,"SERVER get connected from client,ip: "+serverIp+" port: "+serverPort);
                     if (userConnectedListener != null) {
-                        userConnectedListener.onUserConnected(serverIp, serverPort);
+                        userConnectedListener.onClientConnected(serverIp, serverPort);
                     }
                     isConnected = true;
                 }
@@ -346,29 +346,24 @@ public class TalkieClient {
         return ByteBuffer.wrap(buf, 0, length);
     }
 
-    private IUserConnected userConnectedListener;
+    private IClientConnected userConnectedListener;
 
-    public void setUserConnectedListener(final IUserConnected listener) {
+    public void setClientConnectedListener(final IClientConnected listener) {
         if(listener == null){
             return;
         }
-        this.userConnectedListener = new IUserConnected() {
+        this.userConnectedListener = new IClientConnected() {
             @Override
-            public void onUserConnected(final String ip, final int port) {
+            public void onClientConnected(final String ip, final int port) {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        listener.onUserConnected(ip, port);
+                        listener.onClientConnected(ip, port);
                     }
                 });
             }
         };
     }
 
-    interface IUserConnected {
-        void onUserConnected(String ip, int port);
-    }
-
     private Handler handler = new Handler();
-
 }

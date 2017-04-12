@@ -1,4 +1,4 @@
-package wuxian.me.andbootstrapdemo.ad;
+package wuxian.me.andbootstrapdemo.utils.ad;
 
 import android.os.Bundle;
 import android.os.PersistableBundle;

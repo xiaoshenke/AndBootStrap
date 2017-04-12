@@ -1,4 +1,4 @@
-package wuxian.me.andbootstrapdemo.video;
+package wuxian.me.andbootstrapdemo;
 
 import android.net.Uri;
 import android.os.Bundle;

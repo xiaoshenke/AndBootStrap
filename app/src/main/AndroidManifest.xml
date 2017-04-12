@@ -22,13 +22,13 @@
         </activity>
         <activity android:name=".QRCodeActivity">
         </activity>
-        <activity android:name=".video.VideoActivity">
+        <activity android:name=".VideoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ad.AdActivity">
+        <activity android:name=".utils.ad.AdActivity">
         </activity>
     </application>
 
